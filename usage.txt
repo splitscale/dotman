@@ -1,0 +1,9 @@
+Usage: dotman [options] <command>
+
+Options:
+  -h, --help          display this usage guide
+
+Commands:
+
+Examples:
+  
