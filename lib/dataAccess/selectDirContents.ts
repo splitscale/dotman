@@ -3,7 +3,7 @@ import * as path from 'path';
 import inquirer from 'inquirer';
 import { FilepathVariables } from '../variables/filepathVariables.js';
 
-export async function displayDirContents(): Promise<string[]> {
+export async function selectDirContents(): Promise<string[]> {
   // Get the path to the tmp directory
   const tmpDir = FilepathVariables.getRootDir('tmp');
 
