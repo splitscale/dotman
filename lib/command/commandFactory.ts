@@ -8,6 +8,7 @@ export class CommandFactory {
     switch (command) {
       case 'add':
         return new AddArgument();
+
       default:
         throw new Error('Unknown command: ' + command);
     }
