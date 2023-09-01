@@ -1,25 +1,28 @@
-import { Command } from './command.js';
-import { UsageCommand } from './flag/usage/usageCommand.js';
-import { VersionCommand } from './flag/version/versionCommand.js';
+import { AddArgument } from './argument/addArgument.js';
+import { Executable } from './executable.js';
+import { UsageFlag } from './flag/usageFlag.js';
+import { VersionFlag } from './flag/versionFlag.js';
 
 export class CommandFactory {
-  static createArgument(command: string): Command {
+  static createArgument(command: string): Executable {
     switch (command) {
+      case 'add':
+        return new AddArgument();
       default:
-        return new UsageCommand();
+        throw new Error('Unknown command: ' + command);
     }
   }
 
-  static createFlag(flag: string): Command {
+  static createFlag(flag: string): Executable {
     switch (flag) {
       case '-h':
-      case '--help':
-        return new UsageCommand();
+      case '-help':
+        return new UsageFlag();
       case '-v':
-      case '--version':
-        return new VersionCommand();
+      case '-version':
+        return new VersionFlag();
       default:
-        return new UsageCommand();
+        throw new Error('Unknown flag: ' + flag);
     }
   }
 }

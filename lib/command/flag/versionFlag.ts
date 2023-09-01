@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs';
-import { Command } from '../../command.js';
-import { FilepathVariables } from '../../../variables/filepathVariables.js';
+import { Executable } from '../executable.js';
+import { FilepathVariables } from '../../variables/filepathVariables.js';
 
-export class VersionCommand implements Command {
+export class VersionFlag implements Executable {
   async execute(args: string[]): Promise<void> {
     const packageJson = this.readPackageJson();
     const version = JSON.parse(packageJson).version;

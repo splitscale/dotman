@@ -10,18 +10,20 @@ export default async function main() {
   // Set the output path to the current working directory path
   const rootDir = process.cwd();
   const args = process.argv.slice(2);
-  const flags = new FlagExecutor();
+  const flagsExecutor = new FlagExecutor();
+  const argsExecutor = new ArgumentExecutor();
+
+  logger.setAppName('dotman');
 
   try {
-    logger.setAppName('Dotman');
-
     FilepathVariables.setCurrentDir(SystemDirParser.format(rootDir));
 
-    flags.execute(args);
-
-    ArgumentExecutor.execute(args);
+    if (args[0].startsWith('-')) {
+      await flagsExecutor.execute(args);
+    } else {
+      await argsExecutor.execute(args);
+    }
   } catch (error) {
-    flags.execute(args);
     logger.error(error);
   }
 }

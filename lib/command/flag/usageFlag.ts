@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs';
-import { Command } from '../../command.js';
-import { FilepathVariables } from '../../../variables/filepathVariables.js';
+import { Executable } from '../executable.js';
+import { FilepathVariables } from '../../variables/filepathVariables.js';
 
-export class UsageCommand implements Command {
+export class UsageFlag implements Executable {
   async execute(args: string[]): Promise<void> {
     console.log(this.displayUsage());
   }

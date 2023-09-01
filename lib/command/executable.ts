@@ -1,3 +1,3 @@
-export interface Command {
+export interface Executable {
   execute(args: string[]): Promise<void>;
 }
