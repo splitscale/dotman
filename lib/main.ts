@@ -2,6 +2,7 @@
 
 import { ArgumentExecutor } from './command/argumentExecutor.js';
 import { FlagExecutor } from './command/flagExecutor.js';
+import { displayDirContents } from './dataAccess/displayDirContents.js';
 import { syncRepository } from './dataAccess/syncRepository.js';
 import { SystemDirParser } from './path/systemDirParser.js';
 import { logger } from './utils/logger.js';
@@ -24,6 +25,8 @@ export default async function main() {
         'https://github.com/splitscale/dotfiles.git',
         FilepathVariables.getRootDir('tmp')
       );
+    } else if (args[0] === 'display') {
+      displayDirContents();
     } else if (args[0].startsWith('-')) {
       await flagsExecutor.execute(args);
     } else {
