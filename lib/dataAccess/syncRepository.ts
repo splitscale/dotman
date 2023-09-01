@@ -5,37 +5,30 @@ import * as fs from 'fs';
 export async function syncRepository(
   repoUrl: string,
   path: string
-): Promise<boolean> {
-  const isDirectoryEmpty = async (path: string) => {
-    const files = await fs.promises.readdir(path);
-    return files.length === 0;
-  };
-
+): Promise<void> {
   const executeCommand = async (command: string) => {
-    return new Promise<boolean>((resolve, reject) => {
-      exec(command, (error, stdout, stderr) => {
+    return new Promise<void>((resolve, reject) => {
+      exec(command, (error) => {
         if (error) {
-          logger.error(error.message);
-          resolve(false);
+          reject(error);
           return;
         }
-
-        if (stdout.trim() !== '') logger.log(stdout);
-        if (stderr.trim() !== '') logger.error(stderr);
-        resolve(true);
+        resolve();
       });
     });
   };
 
   try {
-    await fs.promises.access(path);
-    const isEmpty = await isDirectoryEmpty(path);
-    if (isEmpty) {
-      return executeCommand(`git clone ${repoUrl} ${path}`);
+    await fs.promises.mkdir(path, { recursive: true });
+    const files = await fs.promises.readdir(path);
+    if (files.length === 0) {
+      await executeCommand(`git clone ${repoUrl} ${path}`);
+      logger.info('Repository cloned successfully');
     } else {
-      return executeCommand(`cd ${path} && git pull`);
+      await executeCommand(`cd ${path} && git pull`);
+      logger.info('Repository pulled successfully');
     }
   } catch (error) {
-    return executeCommand(`git clone ${repoUrl} ${path}`);
+    throw error;
   }
 }

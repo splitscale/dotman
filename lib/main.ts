@@ -2,6 +2,9 @@
 
 import { ArgumentExecutor } from './command/argumentExecutor.js';
 import { FlagExecutor } from './command/flagExecutor.js';
+import { cleanRepository } from './dataAccess/cleanRepository.js';
+import { copySelectedFiles } from './dataAccess/copySelectedFIles.js';
+import { readDmConfig } from './dataAccess/readDmConfig.js';
 import { selectDirContents } from './dataAccess/selectDirContents.js';
 import { syncRepository } from './dataAccess/syncRepository.js';
 import { SystemDirParser } from './path/systemDirParser.js';
@@ -19,20 +22,24 @@ export default async function main() {
 
   try {
     FilepathVariables.setCurrentDir(SystemDirParser.format(rootDir));
+    const currentDir = FilepathVariables.currentDir;
+    const firstArg = args[0];
 
-    if (args[0] === 'test') {
-      syncRepository(
-        'https://github.com/splitscale/dotfiles.git',
-        FilepathVariables.getRootDir('tmp')
-      );
-    } else if (args[0] === 'display') {
-      selectDirContents();
-    } else if (args[0].startsWith('-')) {
+    if (!firstArg) {
+      const tmpDir = FilepathVariables.getRootDir('tmp');
+      const url = (await readDmConfig()).gitUrl;
+
+      await syncRepository(url, tmpDir);
+      const files = await selectDirContents();
+      await copySelectedFiles(files, currentDir);
+    } else if (firstArg.startsWith('-')) {
       await flagsExecutor.execute(args);
     } else {
       await argsExecutor.execute(args);
     }
   } catch (error) {
     logger.error(error);
+  } finally {
+    await cleanRepository('tmp');
   }
 }

@@ -8,7 +8,10 @@ export async function selectDirContents(): Promise<string[]> {
   const tmpDir = FilepathVariables.getRootDir('tmp');
 
   // Read the contents of the tmp directory
-  const files = fs.readdirSync(tmpDir);
+  let files = fs.readdirSync(tmpDir);
+
+  // Exclude '.git' from the file list
+  files = files.filter((file) => file !== '.git');
 
   // Map the file names to an array of choices for the enquirer prompt
   const choices = files.map((file) => ({
@@ -20,7 +23,7 @@ export async function selectDirContents(): Promise<string[]> {
   const response = await inquirer.prompt<{ selectedFiles: string[] }>({
     type: 'checkbox',
     name: 'selectedFiles',
-    message: 'Select files to display',
+    message: 'Select files to copy',
     choices,
   });
 
